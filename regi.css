@@ -1,0 +1,29 @@
+/* Configurações globais */
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #f8f9fa; /* Um fundo cinza claro para destacar o carrossel */
+}
+
+/* Container que limita o tamanho e centraliza o carrossel */
+.custom-carousel-container {
+    max-width: 200px;      /* Define a largura máxima (diminuindo a imagem) */
+    margin: 50px auto;     /* Centraliza na tela e dá espaço no topo/base */
+    border-radius: 15px;   /* Arredonda as bordas */
+    overflow: hidden;      /* Garante que a imagem siga o arredondamento */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Adiciona uma sombra suave */
+}
+
+/* Ajuste das imagens */
+.carousel-item {
+    height: 100px;         /* Altura fixa para não ficar gigante */
+    min-height: 300px;
+}
+
+.carousel-item img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;     /* Mantém a proporção sem esticar */
+    object-position: center;
+}
