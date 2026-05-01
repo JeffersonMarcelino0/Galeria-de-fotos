@@ -49,3 +49,27 @@
 </body>
 
 </html>
+<script src="auth.js"></script>
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    const result = auth.login(email, password);
+    
+    if (result.success) {
+        alert(result.message);
+        // Redireciona para página principal
+        window.location.href = 'telaHome.html'; // Crie esta página
+    } else {
+        alert(result.message);
+    }
+});
+
+// Auto-login se "lembrar senha" estiver marcado (simplificado)
+if (auth.isLoggedIn()) {
+    window.location.href = 'telaHome.html';
+}
+</script>
