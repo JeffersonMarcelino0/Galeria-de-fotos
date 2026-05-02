@@ -70,3 +70,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// 💖 CORAÇÃO PULSANTE no centro
+function createLoveHeart() {
+    const heart = document.createElement('div');
+    heart.innerHTML = '💖';
+    heart.style.cssText = `
+        position: fixed;
+        font-size: 30px;
+        left: 50%;
+        top: 20%;
+        transform: translate(-50%, -50%);
+        z-index: 100;
+        animation: float 6s ease-in-out infinite;
+        pointer-events: none;
+    `;
+    document.body.appendChild(heart);
+}
+
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes float {
+        0%, 100% { transform: translate(-50%, -50%) translateY(0px) rotate(0deg); }
+        50% { transform: translate(-50%, -50%) translateY(-20px) rotate(10deg); }
+    }
+`;
+document.head.appendChild(style);
+
+createLoveHeart();

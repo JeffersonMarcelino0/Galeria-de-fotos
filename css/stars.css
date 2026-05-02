@@ -1,0 +1,26 @@
+/* APENAS ESTRELAS - SEM CORAÇÃO */
+body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 70%, #000 100%);
+    position: relative;
+    overflow-x: hidden;
+    font-family: "Poppins", sans-serif;
+}
+
+.stars-bg, .stars-fg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.star-bg, .star-fg {
+    position: absolute;
+    border-radius: 50%;
+    animation: twinkleBg 3s infinite alternate;
+    will-change: transform;
+}
+
+/* Resto igual ao anterior... */

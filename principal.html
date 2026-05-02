@@ -3,44 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria do Amor - Principal</title>
-    <link href='http://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
-    <link rel="shortcut icon" href="./img/icon.png" />
-    <style>
-        body { font-family: Arial; text-align: center; padding: 50px; }
-        .user-info { background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px; }
-        button { padding: 10px 20px; background: #ff69b4; color: white; border: none; border-radius: 5px; cursor: pointer; }
-    </style>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+    <link rel="stylesheet" href="css/stars.css">
+    <link rel="stylesheet" href="css/principal.css">
+    <link rel="shortcut icon" href="./img/icon.png">
+    <title> Galeria do Amor</title>
 </head>
 <body>
-    <h1>🌹 GALERIA DO AMOR</h1>
-    
-    <div class="user-info">
-        <h2>Bem-vindo, <span id="nomeUsuario"></span>! 💕</h2>
-        <p>Email: <span id="emailUsuario"></span></p>
-        <button onclick="logout()">🚪 Sair</button>
-    </div>
+    <main class="container">
+        <!-- ❤️ HEADER ROMÂNTICO -->
+        <div class="hero">
+            <h1 id="nomeUsuario">💖 Carregando...</h1>
+            <h2 id="mensagemAmor">Teu espaço especial no meu coração ✨</h2>
+            <div class="love-stats">
+                <div><i class='bx bxs-heart'></i> <span id="diasAmor">365</span> dias de amor</div>
+                <div><i class='bx bxs-star'></i> <span id="estrelasCount">∞</span> estrelas</div>
+            </div>
+        </div>
 
-    <!-- AQUI COLOCA SUA GALERIA -->
+        <!-- 📸 GALERIA DE FOTOS -->
+        <div class="galeria-section">
+            <h3>💕 Nossas Memórias</h3>
+            <div id="galeriaFotos" class="galeria-grid">
+                <!-- Fotos carregam aqui -->
+            </div>
+            <button onclick="addNovaFoto()" class="add-foto-btn">
+                ➕ Nova Memória
+            </button>
+        </div>
+
+        <!-- 🚪 SAIR -->
+        <button onclick="logout()" class="logout-btn">💕 Voltar ao Início</button>
+    </main>
 
     <script src="auth.js"></script>
+    <script src="css/stars.js"></script>
     <script>
-        // 🚨 SÓ AQUI VERIFICA SE ESTÁ LOGADO!
+        // 🔒 Verifica login
         if (!auth.isLoggedIn()) {
-            alert('❌ Você precisa fazer login!');
             window.location.href = 'index.html';
-        } else {
-            // MOSTRA DADOS DO USUÁRIO
-            const usuario = auth.getCurrentUser();
-            document.getElementById('nomeUsuario').textContent = usuario.name;
-            document.getElementById('emailUsuario').textContent = usuario.email;
+            throw new Error('Não logado');
         }
 
-        // FUNÇÃO SAIR
+        // 💖 Carrega dados do usuário
+        function initApp() {
+            const user = auth.getCurrentUser();
+            document.getElementById('nomeUsuario').textContent = `💖 ${user.name}`;
+            document.getElementById('mensagemAmor').textContent = 
+                `Te amo ${user.name}! Mais que todas as estrelas ✨`;
+            
+            carregaFotosUsuario(user.id);
+            calculaDiasAmor();
+        }
+
+        // 📸 GALERIA - Carrega fotos do usuário
+        function carregaFotosUsuario(userId) {
+            const galeria = document.getElementById('galeriaFotos');
+            const fotos = JSON.parse(localStorage.getItem(`fotos_${userId}`) || '[]');
+            
+            galeria.innerHTML = '';
+            
+            if (fotos.length === 0) {
+                galeria.innerHTML = '<div class="sem-fotos">💭 Primeira memória em breve...</div>';
+                return;
+            }
+            
+            fotos.forEach((foto, index) => {
+                const div = document.createElement('div');
+                div.className = 'foto-item';
+                div.innerHTML = `
+                    <img src="${foto.url}" alt="Memória ${index + 1}">
+                    <div class="foto-info">
+                        <span>${foto.data}</span>
+                        <div class="acoes">
+                            <i class='bx bxs-heart' onclick="curtir(${foto.id})"></i>
+                            <span class="curtidas">${foto.curtidas || 0}</span>
+                        </div>
+                    </div>
+                `;
+                galeria.appendChild(div);
+            });
+        }
+
+        // ➕ ADICIONAR NOVA FOTO
+        function addNovaFoto() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        salvaFoto(e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        // 💾 SALVA FOTO
+        function salvaFoto(urlFoto) {
+            const user = auth.getCurrentUser();
+            const fotos = JSON.parse(localStorage.getItem(`fotos_${user.id}`) || '[]');
+            
+            const novaFoto = {
+                id: Date.now(),
+                url: urlFoto,
+                data: new Date().toLocaleDateString('pt-BR'),
+                curtidas: 0
+            };
+            
+            fotos.unshift(novaFoto); // Adiciona no início
+            localStorage.setItem(`fotos_${user.id}`, JSON.stringify(fotos));
+            
+            carregaFotosUsuario(user.id);
+            alert('💕 Memória salva com amor!');
+        }
+
+        // ❤️ CURTIR FOTO
+        function curtir(fotoId) {
+            const user = auth.getCurrentUser();
+            const fotos = JSON.parse(localStorage.getItem(`fotos_${user.id}`) || '[]');
+            const foto = fotos.find(f => f.id === fotoId);
+            if (foto) {
+                foto.curtidas = (foto.curtidas || 0) + 1;
+                localStorage.setItem(`fotos_${user.id}`, JSON.stringify(fotos));
+                carregaFotosUsuario(user.id);
+            }
+        }
+
+        // 💕 DIAS DE AMOR
+        function calculaDiasAmor() {
+            const dataInicio = new Date('2022-07-16'); // Mude para data real!
+            const hoje = new Date();
+            const dias = Math.floor((hoje - dataInicio) / (1000 * 60 * 60 * 24));
+            document.getElementById('diasAmor').textContent = dias;
+        }
+
+        // 🚪 LOGOUT
         function logout() {
             auth.logout();
             window.location.href = 'index.html';
         }
+
+        // 🚀 INICIALIZA
+        initApp();
     </script>
 </body>
 </html>
