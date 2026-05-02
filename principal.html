@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria do Amor - Principal</title>
+    <link href='http://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+    <link rel="shortcut icon" href="./img/icon.png" />
+    <style>
+        body { font-family: Arial; text-align: center; padding: 50px; }
+        .user-info { background: #f0f0f0; padding: 20px; border-radius: 10px; margin: 20px; }
+        button { padding: 10px 20px; background: #ff69b4; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🌹 GALERIA DO AMOR</h1>
+    
+    <div class="user-info">
+        <h2>Bem-vindo, <span id="nomeUsuario"></span>! 💕</h2>
+        <p>Email: <span id="emailUsuario"></span></p>
+        <button onclick="logout()">🚪 Sair</button>
+    </div>
+
+    <!-- AQUI COLOCA SUA GALERIA -->
+
+    <script src="auth.js"></script>
+    <script>
+        // 🚨 SÓ AQUI VERIFICA SE ESTÁ LOGADO!
+        if (!auth.isLoggedIn()) {
+            alert('❌ Você precisa fazer login!');
+            window.location.href = 'index.html';
+        } else {
+            // MOSTRA DADOS DO USUÁRIO
+            const usuario = auth.getCurrentUser();
+            document.getElementById('nomeUsuario').textContent = usuario.name;
+            document.getElementById('emailUsuario').textContent = usuario.email;
+        }
+
+        // FUNÇÃO SAIR
+        function logout() {
+            auth.logout();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

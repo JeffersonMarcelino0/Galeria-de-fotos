@@ -107,4 +107,4 @@ class AuthSystem {
 }
 
 // Inicializa sistema global
-const auth = new AuthSystem();
+const auth = new AuthSystem();  

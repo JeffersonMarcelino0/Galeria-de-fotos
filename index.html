@@ -1,75 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href='http://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet" >
-     <link rel="shortcut icon" href="./img/icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+    <link rel="shortcut icon" href="./img/icon.png">
     <link rel="stylesheet" href="style.css">
-    <title>Galeria do amor</title>
+    <title>Galeria do Amor</title>
 </head>
 
 <body>
+    <!-- 🌟 Estrelas criadas pelo stars.js -->
 
     <main class="container">
         <form id="loginForm">
             <h1>SEJA BEM VINDO(a)</h1>
             <h2>Faça seu login</h2>
+            
             <div class="input-box">
                 <input type="email" id="email" placeholder="E-mail" required>
-                <i class="bx bxs-user"></i>
+                <i class='bx bxs-user'></i>
             </div>
 
             <div class="input-box">
                 <input type="password" id="password" placeholder="Senha" required>
-                <i class="bx bxs-lock-alt"></i>
+                <i class='bx bxs-lock-alt'></i>
             </div>
 
             <div class="relembrar-senha">
                 <label>
-                    <input type="checkbox">
-                    lembrar senha
+                    <input type="checkbox"> Lembrar senha
                 </label>
                 <a href="#">Esqueci a senha</a>
             </div>
-            
 
-
-            <button type="submit" class="login">Login </button>
+            <button type="submit" class="login">Login</button>
 
             <div class="register-link">
-                <p> Não tem uma conta?<a href="./registro.html"> registre-se</a></p>
+                <p>Não tem conta? <a href="./registro.html">Registre-se</a></p>
             </div>
 
         </form>
 
     </main>
 
+    <!-- ✅ SCRIPTS NA ORDEM CORRETA -->
+    <script src="auth.js"></script>
+    <script src="stars.js"></script>
+    <script>
+        // 🔒 LOGIN COM EFEITOS VISUAIS
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('loginForm');
+            const btn = document.querySelector('.login');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                
+                // 🔄 Loading
+                btn.textContent = 'Verificando...';
+                btn.disabled = true;
+                
+                // ⏳ Delay visual (0.5s)
+                setTimeout(() => {
+                    const result = auth.login(email, password);
+                    
+                    if (result.success) {
+                        // ✅ Sucesso
+                        btn.textContent = ' Bem-vindo!';
+                        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                        
+                        setTimeout(() => {
+                            window.location.href = 'principal.html';
+                        }, 800);
+                        
+                    } else {
+                        // ❌ Erro
+                        btn.textContent = 'Tentar Novamente';
+                        btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                        alert('❌ ' + result.message);
+                        
+                        setTimeout(() =>{
+                            btn.textContent = 'Login';
+                            btn.style.background = '';
+                            btn.disabled = false;
+                        }, 2000);
+                    }
+                }, 500);
+            });
+        });
+    </script>
 </body>
-
 </html>
-<script src="auth.js"></script>
-<script>
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    const result = auth.login(email, password);
-    
-    if (result.success) {
-        alert(result.message);
-        // Redireciona para página principal
-        window.location.href = 'telaHome.html'; // Crie esta página
-    } else {
-        alert(result.message);
-    }
-});
-
-// Auto-login se "lembrar senha" estiver marcado (simplificado)
-if (auth.isLoggedIn()) {
-    window.location.href = 'telaHome.html';
-}
-</script>

@@ -1,56 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/registro.css">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+    <link rel="shortcut icon" href="./img/icon.png">
+    <link rel="stylesheet" href="style.css">
+    <title>Galeria do Amor - Registro</title>
 </head>
-
 <body>
-
+    <!-- Estrelas criadas automaticamente pelo stars.js -->
+    
     <main class="container">
         <form id="registroForm">
-            <h1>REGISTRO</h1>
-            <h2>Crie sua conta</h2>
+            <h1>CRIE SUA CONTA</h1>
+            <h2>Galeria do Amor</h2>
+            
             <div class="input-box">
                 <input type="text" id="name" placeholder="Nome Completo" required>
-                <i class="bx bxs-user"></i>
+                <i class='bx bxs-user'></i>
             </div>
 
             <div class="input-box">
                 <input type="email" id="email" placeholder="E-mail" required>
-                <i class="bx bxs-user"></i>
+                <i class='bx bx-envelope'></i>
             </div>
 
             <div class="input-box">
-                <input type="password" id="password" placeholder="Senha" required>
-                <i class="bx bxs-lock-alt"></i>
+                <input type="password" id="password" placeholder="Senha (6+ caracteres)" required>
+                <i class='bx bxs-lock-alt'></i>
             </div>
 
             <button type="submit" class="register">Registrar</button>
 
             <div class="login-link">
-                <p> Já tem uma conta?<a href="./index.html"> faça login</a></p>
+                <p>Já tem conta? <a href="./index.html">Faça login</a></p>
+            </div>
+        </form>
+    </main>
 
+    <script src="auth.js"></script>
+    <script src="stars.js"></script>
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const result = auth.register(name, email, password);
+            
+            const btn = document.querySelector('.register');
+            if (result.success) {
+                btn.textContent = '✅ CRIANDO...';
+                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                setTimeout(() => {
+                    alert(' Conta criada! Faça login agora.');
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                btn.textContent = '❌ Tentar Novamente';
+                btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                setTimeout(() => {
+                    btn.textContent = 'Registrar';
+                    btn.style.background = '';
+                }, 2000);
+                alert('❌ ' + result.message);
+            }
+        });
+    </script>
 </body>
 </html>
-<script src="auth.js"></script>
-<script>
-document.getElementById('registroForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    
-    const result = auth.register(name, email, password);
-    
-    if (result.success) {
-        alert(result.message);
-        window.location.href = 'index.html'; // Volta para login
-    } else {
-        alert(result.message);
-    }
-});
-</script>
