@@ -1,3 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+    overflow-x: hidden;
+    position: relative;
+}
+
+.container {
+    position: relative;
+    z-index: 10;
+    width: min(95vw, 500px);
+    margin: 20px auto;
+    padding: 30px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 .hero {
     text-align: center;
     padding: 40px 20px;
@@ -5,6 +32,7 @@
     border-radius: 20px;
     border: 1px solid rgba(255, 107, 157, 0.2);
     margin-bottom: 30px;
+    backdrop-filter: blur(10px);
 }
 
 .hero h1 {
@@ -47,8 +75,44 @@
     backdrop-filter: blur(10px);
 }
 
+.contador-regressivo {
+    background: rgba(255, 107, 157, 0.1);
+    border: 1px solid rgba(255, 107, 157, 0.3);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 30px 0;
+    text-align: center;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(255, 107, 157, 0.2);
+}
+
+.contador-regressivo h3 {
+    color: #ff9ec1;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.tempo-display {
+    font-size: clamp(24px, 6vw, 32px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff6b9d, #c44569);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(255, 107, 157, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
 .galeria-section {
     margin: 30px 0;
+    flex: 1;
 }
 
 .galeria-section h3 {
@@ -107,9 +171,10 @@
     color: #ff6b9d;
     cursor: pointer;
     transition: 0.3s;
+    user-select: none;
 }
 
-.acoes i:hover {
+.acoes i:hover, .acoes i:active {
     color: #fff;
     transform: scale(1.2);
 }
@@ -150,3 +215,21 @@
     color: white;
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
 }
+
+.logout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .galeria-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+    }
+}
+
+::-webkit-scrollbar { display: none; }
