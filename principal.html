@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="shortcut icon" href="./img/icon.png">
     <title> Galeria do Amor</title>
 </head>
+
 <body>
     <main class="container">
         <!-- ❤️ HEADER ROMÂNTICO -->
@@ -19,25 +21,46 @@
                 <div><i class='bx bxs-heart'></i> <span id="diasAmor">365</span> dias de amor</div>
                 <div><i class='bx bxs-star'></i> <span id="estrelasCount">∞</span> estrelas</div>
             </div>
+
+            <!-- ⏳ CONTADOR MINIMALISTA -->
+<div class="countdown-minimal">
+    <div class="countdown-title">Nossa Data especial</div>
+    <div id="countdown-display" class="countdown-display">
+        <span class="countdown-item"><span id="meses">0</span>months</span>
+        <span class="countdown-item"><span id="semanas">0</span>weeks</span>
+        <span class="countdown-item"><span id="dias">0</span>days</span>
+        <span class="countdown-item"><span id="horas">00</span>hours</span>
+        <span class="countdown-item"><span id="minutos">00</span>min</span>
+    </div>
+</div>
+
         </div>
 
-        <!-- 📸 GALERIA DE FOTOS -->
-        <div class="galeria-section">
-            <h3>💕 Nossas Memórias</h3>
-            <div id="galeriaFotos" class="galeria-grid">
-                <!-- Fotos carregam aqui -->
-            </div>
-            <button onclick="addNovaFoto()" class="add-foto-btn">
-                ➕ Nova Memória
-            </button>
+     <!-- 📸 GALERIA COM CARROSSEL -->
+<!-- ➕ UPLOAD COM DATA -->
+<div class="upload-section">
+    <button onclick="abrirUploadModal()" class="add-foto-btn">➕ Nova Memória</button>
+</div>
+
+<!-- MODAL UPLOAD -->
+<div id="uploadModal" class="modal-upload" style="display: none;">
+    <div class="modal-upload-content">
+        <h3>💕 Nova Memória</h3>
+        <input type="file" id="fotoInput" accept="image/*">
+        <input type="date" id="fotoData" value="">
+        <div class="modal-buttons">
+            <button onclick="salvarFotoUpload()">💾 Salvar</button>
+            <button onclick="fecharUploadModal()">❌ Cancelar</button>
         </div>
+    </div>
+</div>
 
         <!-- 🚪 SAIR -->
         <button onclick="logout()" class="logout-btn">💕 Voltar ao Início</button>
     </main>
 
     <script src="auth.js"></script>
-    <script src="css/stars.js"></script>
+    <script src="stars.js"></script>
     <script>
         // 🔒 Verifica login
         if (!auth.isLoggedIn()) {
@@ -45,56 +68,181 @@
             throw new Error('Não logado');
         }
 
+            // ⏳ CONTADOR REGRESSIVO COMPLETO
+function atualizarContador() {
+    // ⚠️ MUDA SÓ ESTA DATA: AAAA-MM-DD HH:MM
+    const dataAniversario = new Date('2026-07-16 10:00');
+    
+    const agora = new Date();
+    const diff = dataAniversario - agora; // Milissegundos
+    
+    if (diff > 0) {
+        // Cálculos detalhados
+        const totalSegundos = Math.floor(diff / 1000);
+        const meses = Math.floor(totalSegundos / (30 * 24 * 60 * 60));
+        const semanas = Math.floor((totalSegundos % (30 * 24 * 60 * 60)) / (7 * 24 * 60 * 60));
+        const dias = Math.floor((totalSegundos % (7 * 24 * 60 * 60)) / (24 * 60 * 60));
+        const horas = Math.floor((totalSegundos % (24 * 60 * 60)) / (60 * 60));
+        const minutos = Math.floor((totalSegundos % (60 * 60)) / 60);
+        
+        // Atualiza DOM
+        document.getElementById('meses').textContent = meses;
+        document.getElementById('semanas').textContent = semanas;
+        document.getElementById('dias').textContent = dias;
+        document.getElementById('horas').textContent = horas.toString().padStart(2, '0');
+        document.getElementById('minutos').textContent = minutos.toString().padStart(2, '0');
+    } 
+}
+
+// 🔄 Tempo real (1 segundo)
+setInterval(atualizarContador, 1000);
+atualizarContador(); // Executa imediatamente
+
+
+
+
         // 💖 Carrega dados do usuário
         function initApp() {
             const user = auth.getCurrentUser();
             document.getElementById('nomeUsuario').textContent = `💖 ${user.name}`;
-            document.getElementById('mensagemAmor').textContent = 
+            document.getElementById('mensagemAmor').textContent =
                 `Te amo ${user.name}! Mais que todas as estrelas ✨`;
-            
+
             carregaFotosUsuario(user.id);
             calculaDiasAmor();
+            calculaDiasAmor();
+    contagemAniversario();
         }
 
-        // 📸 GALERIA - Carrega fotos do usuário
-        function carregaFotosUsuario(userId) {
-            const galeria = document.getElementById('galeriaFotos');
-            const fotos = JSON.parse(localStorage.getItem(`fotos_${userId}`) || '[]');
-            
-            galeria.innerHTML = '';
-            
-            if (fotos.length === 0) {
-                galeria.innerHTML = '<div class="sem-fotos">💭 Primeira memória em breve...</div>';
-                return;
-            }
-            
-            fotos.forEach((foto, index) => {
-                const div = document.createElement('div');
-                div.className = 'foto-item';
-                div.innerHTML = `
-                    <img src="${foto.url}" alt="Memória ${index + 1}">
-                    <div class="foto-info">
-                        <span>${foto.data}</span>
-                        <div class="acoes">
-                            <i class='bx bxs-heart' onclick="curtir(${foto.id})"></i>
-                            <span class="curtidas">${foto.curtidas || 0}</span>
-                        </div>
-                    </div>
-                `;
-                galeria.appendChild(div);
-            });
-        }
+// 🌟 CARROSSEL
+let currentSlide = 0;
+let totalFotos = 0;
+
+function moveCarousel(direction) {
+    currentSlide += direction;
+    if (currentSlide >= totalFotos) currentSlide = 0;
+    if (currentSlide < 0) currentSlide = totalFotos - 1;
+    
+    const carousel = document.getElementById('galeriaFotos');
+    const fotoWidth = 172;
+    carousel.style.transform = `translateX(-${currentSlide * fotoWidth}px)`;
+}
+
+// 🖼️ MODAL FULLSCREEN FUNCIONANDO
+function abrirModal(url, data) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <button class="modal-close" onclick="this.parentElement.remove()">×</button>
+        <div class="modal-content">
+            <img src="${url}" alt="${data}">
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.remove();
+    };
+}
+
+// 📸 UPLOAD COM DATA EDITÁVEL
+function abrirUploadModal() {
+    document.getElementById('uploadModal').style.display = 'flex';
+    document.getElementById('fotoData').value = new Date().toISOString().split('T')[0];
+}
+
+function salvarFotoUpload() {
+    const file = document.getElementById('fotoInput').files[0];
+    const dataSelecionada = document.getElementById('fotoData').value;
+    
+    if (!file) {
+        alert('❌ Selecione uma foto!');
+        return;
+    }
+    
+    if (!dataSelecionada) {
+        alert('❌ Selecione a data!');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        salvaFoto(e.target.result, dataSelecionada);
+        fecharUploadModal();
+    };
+    reader.readAsDataURL(file);
+}
+
+function fecharUploadModal() {
+    document.getElementById('uploadModal').style.display = 'none';
+    document.getElementById('fotoInput').value = '';
+}
+
+
+
+// 💾 SALVA COM DATA PERSONALIZADA
+function salvaFoto(urlFoto, dataFoto = null) {
+    const user = auth.getCurrentUser();
+    const fotos = JSON.parse(localStorage.getItem(`fotos_${user.id}`) || '[]');
+    
+    const novaFoto = {
+        id: Date.now(),
+        url: urlFoto,
+        data: dataFoto || new Date().toLocaleDateString('pt-BR'),
+        curtidas: 0
+    };
+    
+    fotos.unshift(novaFoto);
+    localStorage.setItem(`fotos_${user.id}`, JSON.stringify(fotos));
+    carregaFotosUsuario(user.id);
+    alert('💕 Memória salva!');
+}
+
+// 🖼️ CARREGA FOTOS CORRIGIDO
+function carregaFotosUsuario(userId) {
+    const galeria = document.getElementById('galeriaFotos');
+    const fotos = JSON.parse(localStorage.getItem(`fotos_${user.id}`) || '[]');
+    
+    galeria.innerHTML = '';
+    totalFotos = fotos.length;
+    currentSlide = 0;
+    
+    if (fotos.length === 0) {
+        galeria.innerHTML = '<div class="sem-fotos">💭 Primeira memória em breve...</div>';
+        return;
+    }
+    
+    fotos.forEach((foto) => {
+        const div = document.createElement('div');
+        div.className = 'foto-item';
+        div.onclick = () => abrirModal(foto.url, foto.data);
+        div.innerHTML = `
+            <img src="${foto.url}" alt="${foto.data}" loading="lazy">
+            <div class="foto-info">
+                <span>${foto.data}</span>
+                <div class="acoes">
+                    <i class='bx bxs-heart' onclick="event.stopPropagation(); curtir(${foto.id})"></i>
+                    <span class="curtidas">${foto.curtidas || 0}</span>
+                </div>
+            </div>
+        `;
+        galeria.appendChild(div);
+    });
+    
+    galeria.style.transform = 'translateX(0px)';
+}
+
 
         // ➕ ADICIONAR NOVA FOTO
         function addNovaFoto() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
-            input.onchange = function(e) {
+            input.onchange = function (e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         salvaFoto(e.target.result);
                     };
                     reader.readAsDataURL(file);
@@ -107,17 +255,17 @@
         function salvaFoto(urlFoto) {
             const user = auth.getCurrentUser();
             const fotos = JSON.parse(localStorage.getItem(`fotos_${user.id}`) || '[]');
-            
+
             const novaFoto = {
                 id: Date.now(),
                 url: urlFoto,
                 data: new Date().toLocaleDateString('pt-BR'),
                 curtidas: 0
             };
-            
+
             fotos.unshift(novaFoto); // Adiciona no início
             localStorage.setItem(`fotos_${user.id}`, JSON.stringify(fotos));
-            
+
             carregaFotosUsuario(user.id);
             alert('💕 Memória salva com amor!');
         }
@@ -152,4 +300,5 @@
         initApp();
     </script>
 </body>
+
 </html>
